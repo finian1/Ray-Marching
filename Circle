@@ -1,0 +1,18 @@
+class Circle{
+  PVector pos;
+  float radius;
+  
+  public Circle(PVector Position, float Radius){
+    pos = Position;
+    radius = Radius;
+  }
+  public PVector GetPosition(){
+    return pos;
+  }
+
+  
+  public float GetRadius(){
+    return radius;
+  }
+  
+}
