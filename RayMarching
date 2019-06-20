@@ -1,0 +1,159 @@
+Circle[] currentCircles;
+PVector[] pointList;
+PVector[] lineList1 = new PVector[0], lineList2 = new PVector[0];
+Ray ray;
+float angle = 0;
+float rotationSpeed = 0.1;
+float resolutionChangeRate = 0.1;
+float maximumDistance = 500;
+float numberOfCircles = 75;
+float posX, posY;
+boolean reverse = false;
+
+void setup() {
+  size(1000, 1000);
+  background(0);
+  strokeWeight(1);
+  pointList = new PVector[0];
+  
+  ray = new Ray();
+
+
+  for (int i = 0; i < numberOfCircles; i ++) {
+    CreateCircle(new PVector(random(width), random(height)), random(100));
+  }
+}
+
+void draw() {
+  if (keyPressed) {
+    if (key == 'w') {
+      if(rotationSpeed + resolutionChangeRate <= 360){
+        rotationSpeed += resolutionChangeRate;
+        println(rotationSpeed);
+      }
+    } else if (key == 's') {
+      if(rotationSpeed - resolutionChangeRate >= 0.05){
+        rotationSpeed -= resolutionChangeRate;
+        println(rotationSpeed);
+      }
+    }
+  }
+  
+  background(0);
+  
+  
+  stroke(255);
+  for(int i = 0; i < lineList1.length; i ++){
+    line(lineList1[i].x, lineList1[i].y, lineList2[i].x, lineList2[i].y);
+  }
+  /*stroke(200, 0, 0);
+  for(int i = 0; i < pointList.length; i ++){
+    point(pointList[i].x, pointList[i].y);
+  }
+  stroke(50, 255, 50);
+  fill(50, 255, 50);
+  strokeWeight(1);*/
+  
+  //circle(currentCircles[0].GetPosition().x, currentCircles[0].GetPosition().y, currentCircles[0].GetRadius());
+  //updateRay();
+  if(angle < 360 * 500){
+  //angle += rotationSpeed;
+  /*posX = mouseX;
+  posY = mouseY;
+  PVector startPosition = new PVector(posX, posY);
+  ray = new Ray();
+  ray.SetAngle(radians(angle));
+  ray.SetRayPosition(startPosition);*/
+  updateRay();
+  //println(degrees(PVector.angleBetween(startPosition, new PVector(mouseX, mouseY))));
+  //println(mouseX, mouseY, startPosition);
+  //println(angle);
+  //ray.March(FindClosestDistance());
+  }
+  //println(startPosition);
+  
+}
+
+void updateRay() {
+  pointList = new PVector[0];
+  lineList1 = new PVector[0];
+  lineList2 = new PVector[0];
+  int numOfLoops = int(360/rotationSpeed);
+  for(int i = 0; i < numOfLoops; i ++){
+    posX = mouseX;
+    posY = mouseY;
+    PVector startPosition = new PVector(posX, posY);
+    ray = new Ray();
+    ray.SetAngle(radians(angle));
+    ray.SetRayPosition(startPosition);
+    ray.March(FindClosestDistance());
+    angle += rotationSpeed;
+  }
+  angle = 0;
+  stroke(255);
+  fill(255);
+  DrawShape();
+  
+}
+void DrawShape(){
+  beginShape();
+  for(int i = 0; i < pointList.length; i++){
+    vertex(pointList[i].x, pointList[i].y);
+  }
+  endShape();
+}
+
+
+public float FindClosestDistance() {
+  float closestDistance = 99999;
+  try {
+    for (int i = 0; i < currentCircles.length; i ++) {
+      float distance = dist(ray.GetPosition().x, ray.GetPosition().y, currentCircles[i].GetPosition().x, currentCircles[i].GetPosition().y) - (currentCircles[i].GetRadius()/2);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+      }
+    }
+    return closestDistance;
+  }
+  catch(Exception exe) {
+    return maximumDistance;
+  }
+}
+
+
+
+void CreateCircle(PVector pos, float radius) {
+  if (currentCircles == null) {
+    currentCircles = new Circle[0];
+  }
+  Circle[] tempArray = currentCircles;
+  currentCircles = new Circle[currentCircles.length + 1];
+  for (int i = 0; i < currentCircles.length - 1; i++) {
+    currentCircles[i] = tempArray[i];
+  }
+  currentCircles[currentCircles.length - 1] = new Circle(pos, radius);
+}
+
+void AddPoint(PVector point){
+  PVector[] tempArray = pointList;
+  pointList = new PVector[pointList.length + 1];
+  for (int i = 0; i < tempArray.length; i ++){
+    pointList[i] = tempArray[i];
+  }
+  pointList[pointList.length - 1] = point;
+}
+
+void AddLine(PVector point1, PVector point2){
+  PVector[] tempArray1 = lineList1;
+  PVector[] tempArray2 = lineList2;
+  lineList1 = new PVector[lineList1.length + 1];
+  lineList2 = new PVector[lineList2.length + 1];
+  for (int i = 0; i < tempArray1.length; i ++){
+    lineList1[i] = tempArray1[i];
+  }  
+  for (int i = 0; i < tempArray2.length; i ++){
+    lineList2[i] = tempArray2[i];
+  }
+  lineList1[lineList1.length - 1] = point1;
+  lineList2[lineList2.length - 1] = point2;
+}
