@@ -1,0 +1,45 @@
+class Ray{
+  PVector position;
+  float angle;
+  float minimumDistance = 0.2;
+
+  public Ray(){
+    position = new PVector(0,0);
+    angle = 0;
+  }
+  
+  public void March(float Distance){
+    if(Distance > 1 && Distance < maximumDistance){
+
+      //circle(position.x, position.y, Distance * 2);
+      float x = position.x + cos(angle) * Distance;
+      float y = position.y + sin(angle) * Distance;
+      position = new PVector(x, y);
+      
+      March(FindClosestDistance());
+    }else if(Distance == maximumDistance){
+      //circle(position.x, position.y, Distance);
+      position.add(PVector.fromAngle(angle).mult(Distance));
+    }else{
+      AddPoint(position);
+      //AddLine(new PVector(posX, posY), position);
+    }
+  }
+  
+  public PVector GetPosition(){
+    return position;
+  }
+  
+  public float GetAngle(){
+    return angle;
+  }
+  
+  public void SetAngle(float val){
+    angle = val;
+  }
+  
+  public void SetRayPosition(PVector pos){
+    position = pos;
+  }
+  
+}
